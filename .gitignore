@@ -1,0 +1,5 @@
+data/
+__pycache__/
+editor_server/venv/
+editor_server/__pycache__/
+editor_server/.env

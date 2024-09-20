@@ -1,0 +1,30 @@
+networks:
+  editor_db:
+services:
+  db:
+    restart: always
+    image: postgres:latest
+    container_name: db
+    ports:
+      - "5432:5432"
+    networks:
+      - editor_db
+    environment:
+      TZ: Asia/Shanghai
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: editor
+    volumes:
+      - ./data:/var/lib/postgresql/data:rw
+  web:
+    restart: always
+    build: ./editor_server
+    container_name: editor_server
+    tty: true
+    stdin_open: true
+    networks:
+      - editor_db
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
