@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from tortoise import Tortoise
 
 from app.api.v1.auth import auth_router
+from app.api.v1.users import user_router
 from app.core.settings import settings, TORTOISE_ORM
 
 
@@ -30,6 +31,7 @@ app = FastAPI(
 
 
 app.include_router(auth_router)
+app.include_router(user_router)
 
 
 @app.get("/")

@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED=TRUE
@@ -12,7 +12,7 @@ ADD . $APP_HOME
 
 RUN /usr/local/bin/python -m pip install --upgrade pip >/dev/null 2>&1
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 RUN sed -i 's/\r//' ./start.sh
 

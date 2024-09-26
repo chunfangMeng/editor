@@ -1,21 +1,32 @@
 networks:
-  editor_db:
+  editor_db_network:
+  redis_db_network:
 services:
-  db:
+  redis:
+    restart: always
+    image: redis:latest
+    container_name: editor_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - redis_db_network
+    volumes:
+      - ./data/redis/:/data:rw
+  editor_db:
     restart: always
     image: postgres:latest
-    container_name: db
+    container_name: editor_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
-      - editor_db
+      - editor_db_network
     environment:
       TZ: Asia/Shanghai
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: editor
     volumes:
-      - ./data:/var/lib/postgresql/data:rw
+      - ./data/psql/:/var/lib/postgresql/data:rw
   web:
     restart: always
     build: ./editor_server
@@ -23,8 +34,9 @@ services:
     tty: true
     stdin_open: true
     networks:
-      - editor_db
+      - editor_db_network
+      - redis_db_network
     depends_on:
-      - db
+      - editor_db
     ports:
-      - "8000:8000"
+      - "9000:9000"

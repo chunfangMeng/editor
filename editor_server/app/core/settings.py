@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     AUTH_ALGORITHM: str = 'HS256'
     AUTH_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
+    REDIS_HOST: str = os.getenv('REDIS_HOST')
+    REDIS_PORT: str = os.getenv('REDIS_PORT')
+    REDIS_DB: int = os.getenv('REDIS_DB')
+
 
 settings = Settings()
 

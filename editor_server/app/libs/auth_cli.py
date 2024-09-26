@@ -1,6 +1,8 @@
 import jwt
 
 from datetime import datetime, timedelta, timezone
+from fastapi import Depends, HTTPException, status, Request
+from fastapi.security import OAuth2PasswordBearer
 from typing import  Optional
 
 from app.core.settings import settings
@@ -39,3 +41,28 @@ class AuthCls:
         if not is_valid:
             raise Exception("Invalid password")
         return user_instance
+
+
+oauth2 = OAuth2PasswordBearer(tokenUrl='/api/v1/login/', scheme_name="User",)
+
+
+async def authenticate_user(request: Request, token=Depends(oauth2)):
+    try:
+        payload = jwt.decode(
+            token,
+            settings.APP_SECRET_KEY,
+            algorithms=[settings.APP_ALGORITHM]
+        )
+        user_instance = await Users.filter(username=payload.get('sub')).first()
+        if user_instance is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="无效凭证",
+                headers={"WWW-Authenticate": f"Bearer {token}"},
+            )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="无效凭证",
+            headers={"WWW-Authenticate": f"Bearer {token}"},
+        )
