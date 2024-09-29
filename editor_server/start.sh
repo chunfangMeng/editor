@@ -14,6 +14,12 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 EOF
 
-aerich init-db && aerich migrate --name migrate_column && aerich upgrade
+aerich init -t app.core.settings.TORTOISE_ORM
+
+aerich init-db
+
+aerich migrate --name migrate_column
+
+aerich upgrade
 
 gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:9000 --reload

@@ -3,7 +3,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
-from typing import  Optional
+from typing import Optional
 
 from app.core.settings import settings
 from app.models.users import Users
@@ -50,8 +50,8 @@ async def authenticate_user(request: Request, token=Depends(oauth2)):
     try:
         payload = jwt.decode(
             token,
-            settings.APP_SECRET_KEY,
-            algorithms=[settings.APP_ALGORITHM]
+            settings.AUTH_SECRET_KEY,
+            algorithms=[settings.AUTH_ALGORITHM]
         )
         user_instance = await Users.filter(username=payload.get('sub')).first()
         if user_instance is None:

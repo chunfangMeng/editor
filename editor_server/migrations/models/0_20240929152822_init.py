@@ -46,6 +46,22 @@ CREATE TABLE IF NOT EXISTS "users" (
     "is_staff" BOOL NOT NULL  DEFAULT False,
     "last_login" TIMESTAMPTZ,
     "last_request" TIMESTAMPTZ
+);
+CREATE TABLE IF NOT EXISTS "userpermissiongroups" (
+    "id" BIGSERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "is_active" BOOL NOT NULL  DEFAULT True,
+    "permission_group_id" BIGINT NOT NULL REFERENCES "permissiongroups" ("id") ON DELETE CASCADE,
+    "user_id" BIGINT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "userpermissions" (
+    "id" BIGSERIAL NOT NULL PRIMARY KEY,
+    "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "is_active" BOOL NOT NULL  DEFAULT True,
+    "permission_id" BIGINT NOT NULL REFERENCES "permissions" ("id") ON DELETE CASCADE,
+    "user_id" BIGINT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
 );"""
 
 

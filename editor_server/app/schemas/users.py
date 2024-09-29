@@ -66,3 +66,50 @@ class UserInstance(BaseModel):
 class LoginToken(BaseModel):
     access_token: str
     token_type: str
+
+
+class PermissionInstance(BaseModel):
+    id: int
+    name: str
+    code: str
+    description: str = ''
+
+
+class CreatePermission(BaseModel):
+    name: str
+    code: str
+    description: str = ''
+
+    @field_validator('name')
+    def name_validator(cls, v: str) -> str:
+        if len(v) < 2:
+            raise ValueError('长度必须大于2')
+        return v
+
+    @field_validator('code')
+    def code_validator(cls, v: str) -> str:
+        if len(v) < 2:
+            raise ValueError('长度必须大于2')
+        return v
+
+
+class CreatePermissionGroup(BaseModel):
+    code: str
+    name: str
+    description: Optional[str] = None
+
+    @field_validator('name')
+    def name_validator(cls, v: str) -> str:
+        if len(v) < 2:
+            raise ValueError('长度必须大于2')
+        return v
+
+
+class CreateUserPermissionGroups(BaseModel):
+    user_id: int
+    permission_group_id: int
+
+
+class CreateUserPermissions(BaseModel):
+    user_id: int
+    permission_id: int
