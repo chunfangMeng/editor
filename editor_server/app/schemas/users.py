@@ -38,9 +38,6 @@ class UserInstance(BaseModel):
     id: int
     username: str
     email: str
-    is_active: bool
-    is_staff: bool
-    is_superuser: bool
     last_login: Union[Optional[str], datetime.datetime]
     created_at: Union[Optional[str], datetime.datetime]
 
@@ -62,6 +59,9 @@ class UserInstance(BaseModel):
         except ValueError:
             return None
 
+    class Config:
+        from_attributes = True
+
 
 class LoginToken(BaseModel):
     access_token: str
@@ -73,6 +73,9 @@ class PermissionInstance(BaseModel):
     name: str
     code: str
     description: str = ''
+
+    class Config:
+        from_attributes = True
 
 
 class CreatePermission(BaseModel):
@@ -105,6 +108,13 @@ class CreatePermissionGroup(BaseModel):
         return v
 
 
+class PermissionGroupInstance(BaseModel):
+    id: int
+    name: str
+    code: str
+    description: str = ''
+
+
 class CreateUserPermissionGroups(BaseModel):
     user_id: int
     permission_group_id: int
@@ -113,3 +123,20 @@ class CreateUserPermissionGroups(BaseModel):
 class CreateUserPermissions(BaseModel):
     user_id: int
     permission_id: int
+
+
+class UserPermissionGroupInstance(BaseModel):
+    id: int
+    user_id: int
+    permission_group_id: int
+    is_active: bool
+
+
+class UserPermissionInstance(BaseModel):
+    id: int
+    user: UserInstance
+    permission: PermissionInstance
+    is_active: bool
+
+    class Config:
+        from_attributes = True

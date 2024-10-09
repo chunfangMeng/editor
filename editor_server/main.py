@@ -2,10 +2,12 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from fastapi import FastAPI
+from fastapi.exceptions import HTTPException, RequestValidationError
 from tortoise import Tortoise
 
 from app.api.v1.auth import auth_router
 from app.api.v1.users import user_router
+from app.core import exceptions
 from app.core.settings import settings, TORTOISE_ORM
 
 
@@ -32,6 +34,14 @@ app = FastAPI(
 
 app.include_router(auth_router)
 app.include_router(user_router)
+app.add_exception_handler(
+    HTTPException,
+    exceptions.http_exception_handler
+)
+app.add_exception_handler(
+    RequestValidationError,
+    exceptions.params_validation_handler
+)
 
 
 @app.get("/")

@@ -52,6 +52,10 @@ class PermissionGroupPermissions(BaseModel, TimestampMixin):
         "models.Permissions", related_name="permission_group_permissions"
     )
 
+    class Meta:
+        table = "permission_group_permissions"
+        indexes = (('permission_group', 'permission'),)
+
 
 # 用户与权限组关联
 class UserPermissionGroups(BaseModel, TimestampMixin):
@@ -62,6 +66,10 @@ class UserPermissionGroups(BaseModel, TimestampMixin):
     )
     is_active = fields.BooleanField(default=True)
 
+    class Meta:
+        table = "user_permission_groups"
+        indexes = (('user', 'permission_group'),)
+
 
 # 用户与权限关联
 class UserPermissions(BaseModel, TimestampMixin):
@@ -70,3 +78,7 @@ class UserPermissions(BaseModel, TimestampMixin):
     permission = fields.ForeignKeyField("models.Permissions",
                                         related_name="user_permissions")
     is_active = fields.BooleanField(default=True)
+
+    class Meta:
+        table = "user_permissions"
+        indexes = (('user', 'permission'),)
