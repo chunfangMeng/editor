@@ -52,3 +52,21 @@ TORTOISE_ORM = {
         },
     },
 }
+
+
+INIT_PERMISSIONS = [{
+    'code': 'VIEW_USERS',
+    'name': '查看用户',
+}, {
+    'code': 'CREATE_PERMISSIONS',
+    'name': '创建权限',
+}, {
+    'code': 'VIEW_PERMISSIONS',
+    'name': '查看权限',
+}, {
+    'code': 'CREATE_PERMISSION_GROUPS',
+    'name': '创建权限组',
+}, {
+    'code': 'VIEW_PERMISSION_GROUPS',
+    'name': '查看权限组',
+}]

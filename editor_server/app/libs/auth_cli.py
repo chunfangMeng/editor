@@ -3,10 +3,10 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
-from typing import Optional
+from typing import Optional, List
 
 from app.core.settings import settings
-from app.models.users import Users
+from app.models.users import Users, UserPermissions, UserPermissionGroups
 from app.libs.encryption_cli import encryption_cls
 
 
@@ -60,9 +60,42 @@ async def authenticate_user(request: Request, token=Depends(oauth2)):
                 detail="无效凭证",
                 headers={"WWW-Authenticate": f"Bearer {token}"},
             )
+        request.state.user = user_instance
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="无效凭证",
             headers={"WWW-Authenticate": f"Bearer {token}"},
         )
+
+
+def permission_wrapper(permission_codes: List[str],
+                       group_codes: List[str] = None):
+
+    async def permission_required(request: Request):
+        if permission_codes is None and group_codes is None:
+            return True
+        user = request.state.user
+        has_permission = await UserPermissions.filter(
+            user=user,
+            permission__code__in=permission_codes,
+            is_active=True
+        ).exists()
+        if not has_permission:
+            if group_codes is None:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="无权限访问",
+                )
+            has_permission_group = await UserPermissionGroups.filter(
+                user=user,
+                permission_group__code__in=group_codes,
+                is_active=True
+            ).exists()
+            if not has_permission_group:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="无权限访问",
+                )
+        return True
+    return permission_required

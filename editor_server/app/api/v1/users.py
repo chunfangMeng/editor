@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from typing import List
 
 from app.core.response import response, BaseResponse
-from app.libs.auth_cli import authenticate_user
+from app.libs.auth_cli import authenticate_user, permission_wrapper
 from app.models.users import (Users, Permissions, PermissionGroups,
                               UserPermissionGroups, UserPermissions)
 from app.schemas.users import (CreatePermission, UserInstance,
@@ -23,7 +23,10 @@ user_router = APIRouter(
 
 @user_router.get('/users', summary='获取用户列表',
                  response_model=BaseResponse[List[UserInstance]])
-async def users():
+async def users(
+    request: Request,
+    _=Depends(permission_wrapper(["VIEW_USERS"]))
+):
     users = await Users.all()
     return await response(200, '获取用户列表成功', users)
 
